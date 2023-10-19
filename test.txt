@@ -1,5 +1,0 @@
-java -cp bin contention.benchmark.Test -b linkedlists.lockbased.CoarseGrainedListBasedSet -d 2000 -t 4 -u 10 -i 10000 -r 20000 -W 0
-
-java -cp bin/ contention.benchmark.Test -b linkedlists.lockbased.CoarseGrainedListBasedSet -W 0 -d 3000 -t 10 -u 10 -i 1024 -r 2048
-
-java -cp bin/ contention.benchmark.Test -b linkedlists.lockbased.HandOverHandListBasedSet -w 0 -d 3000 -t 10 -u 10 -i 1024 -r 2048
