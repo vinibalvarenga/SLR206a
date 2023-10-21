@@ -1,9 +1,8 @@
 package linkedlists.lockbased;
 
+import contention.abstractions.AbstractCompositionalIntSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import contention.abstractions.AbstractCompositionalIntSet;
 
 public class HandOverHandListBasedSet extends AbstractCompositionalIntSet {
 
@@ -33,15 +32,15 @@ public class HandOverHandListBasedSet extends AbstractCompositionalIntSet {
 				while (curr.key < item) {
 					pred.unlock();
 					pred = curr;
-					curr = curr.next;
+					curr = pred.next;
 					curr.lock();
 				}
 				if (curr.key == item) {
 					return false;
 				}
-				Node newNode = new Node(item);
-				newNode.next = curr;
-				pred.next = newNode;
+				Node node = new Node(item);
+				node.next = curr;
+				pred.next = node;
 				return true;
 			} finally {
 				curr.unlock();
@@ -67,7 +66,7 @@ public class HandOverHandListBasedSet extends AbstractCompositionalIntSet {
 				while (curr.key < item) {
 					pred.unlock();
 					pred = curr;
-					curr = curr.next;
+					curr = pred.next;
 					curr.lock();
 				}
 				if (curr.key == item) {
@@ -99,7 +98,7 @@ public class HandOverHandListBasedSet extends AbstractCompositionalIntSet {
 				while (curr.key < item) {
 					pred.unlock();
 					pred = curr;
-					curr = curr.next;
+					curr = pred.next;
 					curr.lock();
 				}
 				return (curr.key == item);
@@ -112,21 +111,22 @@ public class HandOverHandListBasedSet extends AbstractCompositionalIntSet {
 	}
 
 	private class Node {
-		Node(int item) {
-			key = item;
-			next = null;
-		}
-
 		public int key;
 		public Node next;
-		private Lock lock = new ReentrantLock();
+		private Lock lock;
+
+		Node(int item) {
+			this.key = item;
+			this.next = null;
+			this.lock = new ReentrantLock();
+		}
 
 		public void lock() {
-			lock.lock();
+			this.lock.lock();
 		}
 
 		public void unlock() {
-			lock.unlock();
+			this.lock.unlock();
 		}
 	}
 
@@ -150,29 +150,4 @@ public class HandOverHandListBasedSet extends AbstractCompositionalIntSet {
 		}
 		return count;
 	}
-
-	// @Override
-	// public int size() {
-	// int count = 0;
-	// head.lock();
-	// Node pred = head;
-	// Node curr = pred.next;
-	// try {
-	// curr.lock();
-	// try {
-	// while (curr.key != Integer.MAX_VALUE) {
-	// pred.unlock();
-	// pred = curr;
-	// curr = curr.next;
-	// curr.lock();
-	// count++;
-	// }
-	// return count;
-	// } finally {
-	// curr.unlock();
-	// }
-	// } finally {
-	// pred.unlock();
-	// }
-	// }
 }
